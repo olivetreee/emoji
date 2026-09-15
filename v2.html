@@ -176,7 +176,40 @@
 			}
 		});
 
+		const buildNotification = () => {
+			const notification = new Notification('Testing this', {
+				body: 'This is a test notification',
+				requireInteraction: true
+			});
+			notification.onclick = () => {
+				window.focus();
+				notification.close();
+			};
+			return notification;
+		}
+		const fireNotification = () => {
+			console.log("Firing notification...");
+			if (!("Notification" in window)) {
+				console.warn("This browser does not support notifications.");
+				return;
+			}
+
+			if (Notification.permission === "granted") {
+				buildNotification();
+				return;
+			}
+
+			if (Notification.permission === "default") {
+				Notification.requestPermission().then((permission) => {
+					if (permission === "granted") {
+						buildNotification();
+					}
+				});
+			}
+		};
+
 		const shuffleEmoji = () => {
+			fireNotification();
 			const randomIndex = Math.floor(Math.random() * (emojiList.length-1));
 			const emoji = emojiList[randomIndex];
 			const emojiEl = document.createElement("div");
